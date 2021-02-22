@@ -1,0 +1,108 @@
+<!-- HTML-->
+<div> <img src="https://miro.medium.com/max/560/0*oa0XcvM99Y5clDsj.png" width=23px /> </div>
+<div id='lose' style='display:none'> you lost so we froze your cursor, refresh to gain access again </div>
+
+<!--CSS code-->
+<style>body {
+    background: lightgreen;
+    background-size: 100vw 100vh;
+  }
+  div {
+    position: fixed;
+    font-size: 50px;
+    background-size contain;
+      background-repeat no-repeat;
+      will-change top, left, width, height;
+      transition top 0.001s, left 0.001s, width 0.5s, height   0.5s;
+  }
+  </style>
+
+  <!--JS code-->
+  <script>
+      //assigning variables?
+var up = false,
+    right = false,
+    down = false,
+    left = false,
+    x = window.innerWidth/2-130/2,
+    y= window.innerHeight/2-130/2 ,
+    lastx = window.innerWidth/2-130/2,
+    lasty = window.innerHeight/2-130/2,
+    distance = 20, //change this for longer distance
+    cursorposition = [],
+    lost = false
+
+document.addEventListener('keydown',press)
+
+// what each key does
+function press(e){
+  if (e.keyCode === 87 /* w */){
+    up = true
+  }
+  if (e.keyCode === 68 /* d */){
+    right = true
+  }
+  if (e.keyCode === 83 /* s */){
+    down = true
+  }
+  if (e.keyCode === 65 /* a */){
+    left = true
+  }
+}
+
+document.addEventListener('keyup',release)
+function release(e){
+  if (e.keyCode === 87 /* w */){
+    up = false
+  }
+  if (e.keyCode === 68 /* d */){
+    right = false
+  }
+  if (e.keyCode === 83 /* s */){
+    down = false
+  }
+  if (e.keyCode === 65 /* a */){
+    left = false
+  }
+}
+
+function gameLoop(){
+  if(lost){
+    return; //stops cursor from moving
+  }
+  var div = document.querySelector('div')
+  if (up){
+    y = y - 4
+  }
+  if (right){
+    x = x + 4
+  }
+  if (down){
+    y = y + 4
+  }
+  if (left){
+    x = x - 4
+  }
+  div.style.left = x+'px'//copying the image and trailing behind it
+  div.style.top = y+'px'
+  if (Math.hypot(x - lastx, y - lasty) > distance){
+      document.body.innerHTML +=  '<img style= "left:'+x+'px; top:'+y+'px; position:absolute" src="https://miro.medium.com/max/560/0*oa0XcvM99Y5clDsj.png" width=23px />';
+    cursorposition[cursorposition.length] = {x:lastx, y:lasty};
+    lastx = x;
+    lasty = y;
+    
+    
+  }
+  for(var pos of cursorposition){
+     if (Math.hypot(x - pos.x, y - pos.y) < distance){
+       lost = true; //this section shows the losing screen
+       document.getElementById('lose').style.display='block';
+       
+     }
+  }
+
+  window.requestAnimationFrame(gameLoop)
+}
+window.requestAnimationFrame(gameLoop)
+
+  </script>
